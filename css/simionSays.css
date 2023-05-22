@@ -1,12 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-/*font-family: 'Poppins', sans-serif;*/
-
 *{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Poppins';
+    font-family: 'Poppins', sans-serif;
 }
 
 body{
@@ -115,7 +113,6 @@ body{
     background-color: #e7c6ff;
     font-size: 18px;
     border: none;
-    outline: none;
     outline: none;
     padding: 10px 20px;
     cursor: pointer;
