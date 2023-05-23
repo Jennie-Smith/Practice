@@ -5,7 +5,7 @@ class Tetris {
         this.imageY = imageY;
         this.imageX = imageX;
         this.template = template;
-        this.x = squareCountX/2;
+        this.x = squareCountX / 2;
         this.y = 0;
     }
 
@@ -15,8 +15,15 @@ class Tetris {
                 if(this.template[i][j] == 0) continue;
                 let realX = i + this.getTruncedPosition().x;
                 let realY = i + this.getTruncedPosition().y;
+                if(realY + 1 >= squareCountY) {
+                    return false;
+                }
+                if (gameMap[realY + 1][realX].imageX != - 1) {
+                    return false;
+                }
             }
         }
+        return true;
     }
 
     getTruncedPosition(){
@@ -36,10 +43,10 @@ class Tetris {
     changeRotation(){}
 }
 
-const imageSquareSize = 24
+const imageSquareSize = 24;
 const size = 40;
-const framePerSecond = 24
-const gameSpeed = 5
+const framePerSecond = 24;
+const gameSpeed = 5;
 const canvas = document.getElementById("canvas");
 const image = document.getElementById("image");
 const ctx = canvas.getContext("2d");
@@ -53,7 +60,7 @@ const shapes = [
         [1, 1, 0],
     ]),
     new Tetris(0,96, [
-        [0, 1, 0],
+        [0, 0, 0],
         [1, 1, 1],
         [0, 1, 0],
     ]),
@@ -68,10 +75,10 @@ const shapes = [
         [1, 1, 0],
     ]),
     new Tetris(0,24, [
-        [0, 0, 1,0],
-        [0, 0, 1,0],
-        [0, 0, 1,0],
-        [0, 0, 1,0],
+        [0, 0, 1, 0],
+        [0, 0, 1, 0],
+        [0, 0, 1, 0],
+        [0, 0, 1, 0],
     ]),
     new Tetris(0,0, [
         [1, 1],
@@ -102,6 +109,16 @@ let update = () => {
     if(gameOver) return;
     if(currentShape.checkBottom()){
         currentShape.y += 1;
+    } else{
+        for (let k = 0; k < currentShape.template.length; k++) {
+            for (let l = 0; l < currentShape.template.length; l++) {
+                if(currentShape.template[k][l] == 0) continue;
+                gameMap[currentShape.getTruncedPosition().y + l][currentShape.getTruncedPosition().x + k] = {imageX: currentShape.imageX, imageY: currentShape.imageY}
+            }
+
+        }
+        currentShape = nextShape;
+        nextShape = getRandomShape();
     }
 };
 
@@ -142,7 +159,7 @@ let drawCurrentTetris = () => {
                 imageSquareSize,
                 imageSquareSize,
                 Math.trunc(currentShape.x) * size + size * i,
-                Math.trunc(currentShape.y) * size + size * i,
+                Math.trunc(currentShape.y) * size + size * j,
                 size,
                 size,
             );
