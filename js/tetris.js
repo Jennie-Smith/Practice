@@ -75,6 +75,7 @@ class Tetris {
     moveBottom() {
         if(this.checkBottom()){
             this.y += 1;
+            score += 1;
         }
     }
 
@@ -120,8 +121,12 @@ const size = 40;
 const framePerSecond = 24;
 const gameSpeed = 5;
 const canvas = document.getElementById("canvas");
+const nextShapeCanvas = document.getElementById("nextShapeCanvas");
+const scoreCanvas = document.getElementById("scoreCanvas");
 const image = document.getElementById("image");
 const ctx = canvas.getContext("2d");
+const nctx = nextShapeCanvas.getContext("2d");
+const sctx = scoreCanvas.getContext("2d");
 const squareCountX = canvas.width / size;
 const squareCountY = canvas.height / size;
 
@@ -177,6 +182,27 @@ let gameLoop = () => {
     setInterval(draw, 1000/framePerSecond);
 }
 
+let deleteCompleteRows = () => {
+    for (let i = 0; i < gameMap.length; i++) {
+        let t = gameMap[i];
+        let isComplete = true;
+        for (let j = 0; j < t.length; j++) {
+            if(t[i].imageX == -1) isComplete = false;
+        }
+        if(isComplete) {
+            console.log("complete row")
+            for (let k = i; k > 0; k--) {
+                gameMap[k] = gameMap[k-1]
+            }
+            let temp = [];
+            for (let j = 0; j < squareCountX; j++) {
+                temp.push({ imageX: -1, imageY: -1});
+            }
+            gameMap[0] = temp;
+        }
+    }
+}
+
 let update = () => {
     if(gameOver) return;
     if(currentShape.checkBottom()){
@@ -189,8 +215,13 @@ let update = () => {
             }
 
         }
+        deleteCompleteRows();
         currentShape = nextShape;
         nextShape = getRandomShape();
+        if(!currentShape.checkBottom()){
+            gameOver = true;
+        }
+        score += 10;
     }
 };
 
@@ -260,8 +291,32 @@ let drawSquares = () => {
 };
 
 let drawNextShape = () =>{
+    nctx.fillStyle = "#bca0dc";
+    nctx.fillRect(0, 0, nextShapeCanvas.width, nextShapeCanvas.height);
+    for (let i = 0; i < nextShape.template.length; i++) {
+        for (let j = 0; j < nextShape.template.length; j++) {
+            if(nextShape.template[i][j] == 0) continue;
+            nctx.drawImage(
+                image,
+                nextShape.imageX,
+                nextShape.imageY,
+                imageSquareSize,
+                imageSquareSize,
+                size * i,
+                size * j + size,
+                size,
+                size
+            );
+        }
+    }
+};
 
-}
+let drawScore = () => {
+    sctx.clearRect(0, 0, scoreCanvas.width, scoreCanvas.height);
+    sctx.font = "64px Poppins";
+    sctx.fillStyle = "black";
+    sctx.fillText(score, 10, 50);
+};
 
 let draw = () => {
     ctx.clearRect(0,0, canvas.width, canvas.height);
@@ -269,6 +324,7 @@ let draw = () => {
     drawSquares();
     drawCurrentTetris();
     drawNextShape();
+    drawScore();
     if(gameOver){
         drawGameOver();
     }
