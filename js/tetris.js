@@ -27,7 +27,7 @@ class Tetris {
     }
 
     getTruncedPosition(){
-        return{x: Math.trunc(this.x), y: Math.trunc(this.y)}
+        return{x: Math.trunc(this.x), y: Math.trunc(this.y)};
     }
 
     checkLeft() {
@@ -178,8 +178,8 @@ let initialTwoDArr;
 let whiteLineThickness = 4;
 
 let gameLoop = () => {
-    setInterval(update, 1000/ gameSpeed);
-    setInterval(draw, 1000/framePerSecond);
+    setInterval(update, 1000 / gameSpeed);
+    setInterval(draw, 1000 /framePerSecond);
 }
 
 let deleteCompleteRows = () => {
@@ -187,10 +187,11 @@ let deleteCompleteRows = () => {
         let t = gameMap[i];
         let isComplete = true;
         for (let j = 0; j < t.length; j++) {
-            if(t[i].imageX == -1) isComplete = false;
+            if(t[j].imageX == -1) isComplete = false;
         }
         if(isComplete) {
             console.log("complete row")
+            score += 1000;
             for (let k = i; k > 0; k--) {
                 gameMap[k] = gameMap[k-1]
             }
@@ -212,7 +213,7 @@ let update = () => {
             for (let l = 0; l < currentShape.template.length; l++) {
                 if(currentShape.template[k][l] == 0) continue;
                 gameMap[currentShape.getTruncedPosition().y + l][currentShape.getTruncedPosition().x + k] = {imageX: currentShape.imageX, imageY: currentShape.imageY}
-            }
+            };
 
         }
         deleteCompleteRows();
@@ -221,14 +222,14 @@ let update = () => {
         if(!currentShape.checkBottom()){
             gameOver = true;
         }
-        score += 10;
+        score += 100;
     }
 };
 
 let drawRect = (x, y, width, height, color) => {
     ctx.fillStyle = color;
     ctx.fillRect(x, y, width, height);
-}
+};
 
 let drawBackground = () => {
     drawRect(0,0, canvas.width, canvas.height, "#bca0dc")
@@ -264,7 +265,7 @@ let drawCurrentTetris = () => {
                 Math.trunc(currentShape.x) * size + size * i,
                 Math.trunc(currentShape.y) * size + size * j,
                 size,
-                size,
+                size
             );
         }
     }
@@ -318,6 +319,12 @@ let drawScore = () => {
     sctx.fillText(score, 10, 50);
 };
 
+let drawGameOver = () => {
+    ctx.font = "64px Poppins";
+    ctx.fillStyle = "black";
+    ctx.fillText("Game Over!", 10, canvas.height/2);
+}
+
 let draw = () => {
     ctx.clearRect(0,0, canvas.width, canvas.height);
     drawBackground();
@@ -350,7 +357,7 @@ let resetVars = () => {
     gameMap = initialTwoDArr;
 };
 
-window.addEventListener("keydown", (even)=>{
+window.addEventListener("keydown", (event) =>{
     if(event.keyCode == 37){
         currentShape.moveLeft();
     }else if(event.keyCode == 38){
@@ -360,7 +367,7 @@ window.addEventListener("keydown", (even)=>{
     }else if (event.keyCode == 40){
         currentShape.moveBottom();
     }
-})
+});
 
 resetVars();
 gameLoop();
